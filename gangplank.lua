@@ -174,7 +174,7 @@ function Harass()
 	local Target = GetTarget()
 	if Target == 0 then return end
 	if QReady() and ValidTargetRange(Target, 625) and CanMove() then
-		CastQ(Target)
+		CastSpellTarget(Target, Q)
 	end
 end
 
