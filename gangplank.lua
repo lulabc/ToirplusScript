@@ -28,6 +28,7 @@ local R = 3
 local SpaceKeyCode = 32
 local CKeyCode = 67
 local VKeyCode = 86
+local TKeyCode = 50
 
 local BarrelPred = { delay = 0.25, speed = math.huge, width = 390, range = 1000 }
 local GPR = { delay = 0.25, speed = math.huge, width = 575, range = math.huge }
@@ -113,6 +114,15 @@ function OnTick()
 		SetLuaLaneClear(true)
 		LaneClear()
 	end
+	
+	if GetKeyPress(CKeyCode) == 1 then
+		SetLuaHarass(true)
+		Harass()
+	end
+	
+	if GetKeyPress(TKeyCode) == 1 then
+		AutoShot()
+	end
 
 	UseW()
 
@@ -157,6 +167,14 @@ function CastQEnemy()
 	local barrel = CanQBarrel()
 	if not EReady() and ValidTargetRange(Target, 625) and QReady() and (barrel == nil or GetDistance2Pos(GetPosX(barrel), GetPosZ(barrel), GetPosX(Target), GetPosZ(Target)) > 1200) and CanMove() then
 		CastSpellTarget(Target, Q)
+	end
+end
+
+function Harass()
+	local Target = GetTarget()
+	if Target == 0 then return end
+	if QReady() and ValidTargetRange(Target, 625) and CanMove() then
+		CastQ(Target)
 	end
 end
 
@@ -291,6 +309,22 @@ function AutoBarrel()
 			CastSpellTarget(barrel, Q)
 		end
 		if barrel ~= nil and EnemiesAround(barrel, 370) >= 1 and GetDistance(barrel) < 625 and GetHealthPoint(barrel) == 1 and CanMove() then
+			CastSpellTarget(barrel, Q)
+		end
+	end
+end
+
+function AutoShot()
+	local barrel = CanQBarrel()
+	if barrel ~= nil then
+		local barrelwithenemyf = function() for i,z in pairs(Barrel) do if barrel ~= z and GetDistance2Pos(GetPosX(barrel),GetPosZ(barrel),GetPosX(z),GetPosZ(z)) < 700 then return z end end end
+		local barrelwithenemy = barrelwithenemyf()
+
+		if barrelwithenemy ~= nil and barrel ~= nil and GetDistance(barrel) < 625 and GetHealthPoint(barrel) == 1 and CanMove() then
+
+			CastSpellTarget(barrel, Q)
+		end
+		if barrel ~= nil and GetDistance(barrel) < 625 and GetHealthPoint(barrel) == 1 and CanMove() then
 			CastSpellTarget(barrel, Q)
 		end
 	end
